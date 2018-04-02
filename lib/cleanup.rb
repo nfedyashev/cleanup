@@ -1,6 +1,8 @@
 require 'pry'
 
 class Cleanup
+  DOCUMENT_EXTS = ['.doc'].freeze
+
   def initialize(root_path)
     @root_path = root_path
     @execute_commands = []
@@ -12,7 +14,16 @@ class Cleanup
       return unless File.extname(item) == ".#{with_ext}"
       return unless item.start_with? File.join(@root_path, in_path)
 
-      %(rm #{item})
+      rm item
+    end
+  end
+
+  def move_unsorted_documents(in_path:)
+    -> (item) do
+      return if item.nil?
+      return unless DOCUMENT_EXTS.include?(File.extname(item))
+
+      mv item, 'Documents/Unsorted'
     end
   end
 
@@ -23,12 +34,20 @@ class Cleanup
     Dir.glob("#{@root_path}/**/*") do |item|
       next if File.directory? item
 
-      filters = [
-          delete_all_in_path_with_ext(in_path: 'Downloads', with_ext: 'torrent'),
-          delete_all_in_path_with_ext(in_path: 'Downloads', with_ext: 'deb'),
-          delete_all_in_path_with_ext(in_path: 'Downloads', with_ext: 'htm'),
-          delete_all_in_path_with_ext(in_path: 'Downloads', with_ext: 'html')
+      files_with_extensions_to_delete_from_all_base_folers = [
+          'torrent',
+          'deb',
+          'jpg',
+          'png',
+          'htm',
+          'html'
       ]
+
+      filters = files_with_extensions_to_delete_from_all_base_folers.inject([]) do |r, ext|
+        r << delete_all_in_path_with_ext(in_path: 'Desktop', with_ext: ext)
+        r << delete_all_in_path_with_ext(in_path: 'Downloads', with_ext: ext)
+      end
+      filters << move_unsorted_documents(in_path: 'Downloads')
 
       result_command = nil
       filters.each do |filter|
@@ -43,5 +62,15 @@ class Cleanup
 
   def execute_commands
     @execute_commands
+  end
+
+  private
+
+  def rm(item)
+    %(rm #{item})
+  end
+
+  def mv(item, destination)
+    %(mv #{item} #{File.join(@root_path, destination)})
   end
 end

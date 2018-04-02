@@ -24,9 +24,12 @@ RSpec.describe Cleanup do
       touch "Downloads/index.htm"
       touch "Downloads/.gitkeep"
       touch "Downloads/steam_latest.deb"
+      touch "Downloads/manual.doc"
+      touch "Downloads/dubplate-fm.mp3"
     end
 
-    it { is_expected.to change{ @cleanup.execute_commands }.to(["rm tmp/spec/fixture/Downloads/index.htm",
+    it { is_expected.to change{ @cleanup.execute_commands }.to(["mv tmp/spec/fixture/Downloads/manual.doc tmp/spec/fixture/Documents/Unsorted",
+                                                                "rm tmp/spec/fixture/Downloads/index.htm",
                                                                 "rm tmp/spec/fixture/Downloads/steam_latest.deb",
                                                                 "rm tmp/spec/fixture/Downloads/file.torrent"]) }
   end
