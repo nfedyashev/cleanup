@@ -11,7 +11,7 @@ RSpec.describe Cleanup do
 
   before(:example) do
     @cleanup = Cleanup.new(root_path)
-    FileUtils.rm_r  root_path
+    FileUtils.rm_r root_path
   end
 
   let(:root_path) { "tmp/spec/fixture" }

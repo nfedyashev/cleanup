@@ -1,7 +1,37 @@
 require 'pry'
 
 class Cleanup
-  DOCUMENT_EXTS = ['.doc'].freeze
+  DOCUMENT_EXTS = [
+      '.doc',
+      '.djvu',
+      '.docx',
+      '.epub',
+      '.mobi',
+      '.xlsx',
+      '.pdf'
+  ].freeze
+
+  DESTINATION_FOR_UNSORTED_DOCUMENTS = 'Documents/Unsorted'.freeze
+
+  BASE_FOLERS = [
+      'Desktop',
+      'Downloads'
+  ].freeze
+
+  FILES_WITH_EXTENSIONS_TO_DELETE_FROM_ALL_BASE_FOLERS = [
+      'torrent',
+      'deb',
+      'gz', #.tar.gz - test it
+      'zip',
+      'rar',
+
+      'jpeg',
+      'jpg',
+      'png',
+
+      'htm',
+      'html'
+  ]
 
   def initialize(root_path)
     @root_path = root_path
@@ -22,8 +52,9 @@ class Cleanup
     -> (item) do
       return if item.nil?
       return unless DOCUMENT_EXTS.include?(File.extname(item))
+      return unless item.start_with? File.join(@root_path, in_path)
 
-      mv item, 'Documents/Unsorted'
+      mv item, DESTINATION_FOR_UNSORTED_DOCUMENTS
     end
   end
 
@@ -34,20 +65,15 @@ class Cleanup
     Dir.glob("#{@root_path}/**/*") do |item|
       next if File.directory? item
 
-      files_with_extensions_to_delete_from_all_base_folers = [
-          'torrent',
-          'deb',
-          'jpg',
-          'png',
-          'htm',
-          'html'
-      ]
-
-      filters = files_with_extensions_to_delete_from_all_base_folers.inject([]) do |r, ext|
-        r << delete_all_in_path_with_ext(in_path: 'Desktop', with_ext: ext)
-        r << delete_all_in_path_with_ext(in_path: 'Downloads', with_ext: ext)
+      filters = FILES_WITH_EXTENSIONS_TO_DELETE_FROM_ALL_BASE_FOLERS.inject([]) do |r, ext|
+        BASE_FOLERS.each do |folder|
+          r << delete_all_in_path_with_ext(in_path: folder, with_ext: ext)
+        end
+        r
       end
-      filters << move_unsorted_documents(in_path: 'Downloads')
+      BASE_FOLERS.each do |folder|
+        filters << move_unsorted_documents(in_path: folder)
+      end
 
       result_command = nil
       filters.each do |filter|
