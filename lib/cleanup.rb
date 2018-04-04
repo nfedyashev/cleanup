@@ -5,10 +5,13 @@ class Cleanup
       '.doc',
       '.djvu',
       '.docx',
+      '.fb2',
       '.epub',
       '.mobi',
       '.xlsx',
-      '.pdf'
+      '.rtf',
+      '.pdf',
+      '.txt'
   ].freeze
 
   DESTINATION_FOR_UNSORTED_DOCUMENTS = 'Documents/Unsorted'.freeze
@@ -22,13 +25,26 @@ class Cleanup
       'torrent',
       'deb',
       'gz', #.tar.gz - test it
+      'bz2', #.tar.bz2 - test it
       'zip',
       'rar',
+      'dmg',
+      'jar',
+      'plist',
+
+      'mzn',
+      'js',
+      'jsx',
 
       'jpeg',
       'jpg',
       'png',
+      'pls',
+      'mp3',
+      'mov',
 
+      'download',
+      'webloc',
       'htm',
       'html'
   ]
