@@ -24,6 +24,7 @@ RSpec.describe Cleanup do
     touch "Downloads/.gitkeep"
     touch "Downloads/steam_latest.deb"
     touch "Downloads/manual.doc"
+    touch "Downloads/anki-2.0.47-amd64.tar.bz2"
     touch "Desktop/Scan1.PDF"
     touch "Downloads/dubplate-fm.mp3"
   end
@@ -32,6 +33,7 @@ RSpec.describe Cleanup do
                                                        "rm tmp/spec/fixture/Downloads/index.htm",
                                                        "rm tmp/spec/fixture/Downloads/steam_latest.deb",
                                                        "rm tmp/spec/fixture/Downloads/file.torrent",
+                                                       "rm tmp/spec/fixture/Downloads/anki-2.0.47-amd64.tar.bz2",
                                                        "rm tmp/spec/fixture/Downloads/dubplate-fm.mp3")}
 end
 
